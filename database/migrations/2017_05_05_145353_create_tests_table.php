@@ -19,8 +19,11 @@ class CreateTestsTable extends Migration
             $table->string('slug');
             $table->string('weight');
             $table->date('day');
+            $table->integer('subject_id')->unsigned();
             $table->integer('teacher_id')->unsigned();
             $table->foreign('teacher_id')->references('id')->on('teachers')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('subject_id')->references('id')->on('subjects')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
