@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTestsTable extends Migration
+class CreateCategoryPatrimoniesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,10 @@ class CreateTestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tests', function (Blueprint $table) {
+        Schema::create('category_patrimonies', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
             $table->string('slug');
-            $table->string('weight');
-            $table->date('day');
-            $table->integer('teacher_id')->unsigned();
-            $table->foreign('teacher_id')->references('id')->on('teachers')
-                ->onUpdate('cascade')->onDelete('cascade');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -33,6 +28,6 @@ class CreateTestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tests');
+        Schema::dropIfExists('category_patrimonies');
     }
 }

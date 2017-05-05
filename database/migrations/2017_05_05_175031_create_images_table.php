@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePatrimoniesTable extends Migration
+class CreateImagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreatePatrimoniesTable extends Migration
      */
     public function up()
     {
-        Schema::create('patrimonies', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('slug');
-            $table->string('name');
-            $table->string('key');
-            $table->integer('qtd');
-            $table->double('price')->nullable(true);
-            $table->boolean('situation');
+            $table->string('src');
+            $table->string('ext');
+            $table->string('alt');
+            $table->string('size')->nullable(true);
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreatePatrimoniesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('patrimonies');
+        Schema::dropIfExists('images');
     }
 }

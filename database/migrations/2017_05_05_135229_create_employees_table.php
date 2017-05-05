@@ -15,6 +15,14 @@ class CreateEmployeesTable extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('slug');
+            $table->string('cpf');
+            $table->string('address');
+            $table->string('position')->nullable(true);
+            $table->date('begin_date');
+            $table->date('end_date')->nullable(true);
+            $table->boolean('situation');
             $table->timestamps();
         });
     }
