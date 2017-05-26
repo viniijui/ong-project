@@ -22,7 +22,7 @@ class Test extends Model
 	protected $fillable = [
 		'name',
 		'teacher_id',
-		'subject_id',
+		'subject_time_id',
 		'weight',
 		'day'
 	];

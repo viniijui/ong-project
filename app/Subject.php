@@ -20,7 +20,6 @@ class Subject extends Model
 
 	protected $fillable = [
 		'name',
-		'teacher_id',
-		'teacher2_id',
+		'situation'
 	];
 }
