@@ -21,11 +21,11 @@ class EventController extends Controller
 		$controller = 'admin.event';
 		$table_content = array(
 			"Nome" => 'name',
-			"Responsavel" => 'organizer',
+			"Reserva de patrimonios" => 'patrimony_reserve',
 			"Local" => "place",
 			"Situação" => 'situation'
 		);
-		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create'));	
+		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create'));
 	}
 
 	public function create() {
@@ -41,7 +41,7 @@ class EventController extends Controller
 		$event = $this->eventModel->create($input);
 		return redirect()->route('admin.event.edit', $event->slug);
 	}
-	
+
 	public function edit($slug) {
 		$icon = 'fa fa-calendar';
 		$route_form = ['admin.event.update', $slug];
@@ -55,13 +55,13 @@ class EventController extends Controller
 		$input = $request->all();
 		$event = $this->eventModel->where('slug', $slug)->first();
 		$event->update($input);
-		return redirect()->route('admin.event.edit', $event->slug);	
+		return redirect()->route('admin.event.edit', $event->slug);
 	}
 
 	public function situation($slug, $situation) {
 		$event = $this->eventModel->where('slug', $slug)->first();
 		$event->situation = $situation;
-		$event->save();	
-		return redirect()->route('admin.event.list');	
+		$event->save();
+		return redirect()->route('admin.event.list');
 	}
 }

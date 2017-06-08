@@ -8,7 +8,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 
 class Teacher extends Model
 {
-	
+
 	use Sluggable;
 
 	public function sluggable()
@@ -26,7 +26,8 @@ class Teacher extends Model
 		'address',
 		'begin_date',
 		'end_date',
-		'situation'
+		'situation',
+		'user_id'
 	];
 
 

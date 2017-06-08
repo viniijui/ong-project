@@ -8,7 +8,7 @@
 		<script src="{{elixir('assets/AdminLTE/plugins/fastclick/fastclick.js')}}"></script>
 		<!-- AdminLTE App -->
 		<script src="{{elixir('assets/AdminLTE/dist/js/app.min.js')}}"></script>
-
+		
 		@yield('js')
 	</body>
 </html>

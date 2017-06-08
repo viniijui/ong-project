@@ -7,24 +7,44 @@ use OngSystem\Test;
 use OngSystem\Teacher;
 use OngSystem\Subject;
 use OngSystem\SubjectTime;
+use OngSystem\Student;
+use OngSystem\Notation;
 
 class TestController extends Controller
 {
 	private $testModel;
 	private $subjectModel;
+	private $subjectTimeModel;
 	private $teacherModel;
+	private $studentModel;
+	private $notationModel;
 
-	public function __construct(Test $testModel, Teacher $teacherModel, Subject $subjectModel, SubjectTime $subjectTimeModel)
+	public function __construct(Test $testModel, Teacher $teacherModel, Subject $subjectModel, SubjectTime $subjectTimeModel, Student $studentModel, Notation $notationModel)
 	{
 		$this->testModel = $testModel;
 		$this->subjectModel = $subjectModel;
 		$this->subjectTimeModel = $subjectTimeModel;
 		$this->teacherModel = $teacherModel;
+		$this->studentModel = $studentModel;
+		$this->notationModel = $notationModel;
 	}
 
-	public function roll()
+	public function roll($subject_id='')
 	{
-		$data = $this->testModel->get();
+		if (\Auth::user()->hasRole('teacher')) {
+			$pass_add = true;
+			if ($subject_id !== '') {
+				$data = $this->testModel->where(['subject_time_id' => $subject_id, 'teacher_id' => getTeacherByUserID()->id])->get();
+			} else {
+				$data = $this->testModel->where('teacher_id', getTeacherByUserID()->id)->get();
+			}
+		} else {
+			if ($subject_id !== '') {
+				$data = $this->testModel->where('subject_time_id', $subject_id)->get();
+			} else {
+				$data = $this->testModel->get();
+			}
+		}
 		$create = true;
 		$title = 'Provas';
 		$icon = 'fa fa-file-text';
@@ -34,9 +54,11 @@ class TestController extends Controller
 			"Peso" => 'weight',
 			"Dia" => 'day_br',
 			"Materia" => 'subject_name',
+			"Notas" => 'notation',
 			"Situação" => 'situation'
 		);
-		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create'));	
+
+		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create', 'pass_add', 'subject_id'));
 	}
 
 	public function create() {
@@ -45,13 +67,7 @@ class TestController extends Controller
 		$route_form = 'admin.test.store';
 		$back = 'admin.test.list';
 		$teacher = $this->teacherModel->select('name', 'slug')->where('situation', 1)->get();
-		if ($teacher) {
-			$array_teacher = [];
-			foreach ($teacher as $row) {
-				$array_teacher[$row->slug] = $row->name;
-			}
-		}
-		$subject = $this->subjectTimeModel->where('situation', 1)->get();
+		$subject = $this->subjectTimeModel->where(['situation' => 1, 'teacher_id' => getTeacherByUserID()->id])->get();
 		if ($subject) {
 			$array_subject = [];
 			foreach ($subject as $row) {
@@ -64,12 +80,11 @@ class TestController extends Controller
 	public function store(Request $request) {
 		$input = $request->all();
 		$input['subject_time_id'] =$input['subject'];
-		$teacher = $this->teacherModel->select('id', 'slug')->where('slug', $input['teacher'])->first();
-		$input['teacher_id'] = $teacher->id;
+		$input['teacher_id'] = getTeacherByUserID()->id;
 		$test = $this->testModel->create($input);
 		return redirect()->route('admin.test.edit', $test->slug);
 	}
-	
+
 	public function edit($slug) {
 		$icon = 'fa fa-file-text';
 		$route_form = ['admin.test.update', $slug];
@@ -77,18 +92,11 @@ class TestController extends Controller
 		$data = $this->testModel->where('slug', $slug)->first();
 		$title = 'Editar prova: '.$data->name;
 		$teacher = $this->teacherModel->select('name', 'slug')->where('situation', 1)->get();
-		if ($teacher) {
-			$array_teacher = [];
-			foreach ($teacher as $row) {
-				$array_teacher[$row->slug] = $row->name;
-			}
-		}
-
-		$subject = $this->subjectTimeModel->where('situation', 1)->get();
+		$subject = $this->subjectTimeModel->where(['situation' => 1, 'teacher_id' => getTeacherByUserID()->id])->get();
 		if ($subject) {
 			$array_subject = [];
 			foreach ($subject as $row) {
-				$array_subject[$row->slug] = getSubjectNameByID($row->subject_id).' - '.$row->year.' - '.($row->half == '1-semestre' ? '1º Semestre' : '2º Semestre');
+				$array_subject[$row->id] = getSubjectNameByID($row->subject_id).' - '.$row->year.' - '.($row->half == '1-semestre' ? '1º Semestre' : '2º Semestre');
 			}
 		}
 
@@ -101,19 +109,44 @@ class TestController extends Controller
 	public function update(Request $request, $slug) {
 		$input = $request->all();
 		$input['subject_time_id'] =$input['subject'];
-		$teacher = $this->teacherModel->select('id', 'slug')->where('slug', $input['teacher'])->first();
-		$input['teacher_id'] = $teacher->id;
+		$input['teacher_id'] = getTeacherByUserID()->id;
 		$test = $this->testModel->where('slug', $slug)->first();
 		$test->update($input);
-		return redirect()->route('admin.test.edit', $test->slug);	
+		return redirect()->route('admin.test.edit', $test->slug);
 	}
 
 	public function situation($slug, $situation) {
-		
+
 		$test = $this->testModel->where('slug', $slug)->first();
 		$test->situation = $situation;
-		$test->save();	
-		return redirect()->route('admin.test.list');	
+		$test->save();
+		return redirect()->route('admin.test.list');
 
 	}
+
+	public function notation($subject, $test) {
+		$data = $this->subjectTimeModel->find($subject)->student()->get();
+		$title = 'Cadastro de notas';
+		$icon = 'fa-users';
+		return view('test.notation', compact('data', 'title', 'icon', 'test', 'subject'));
+	}
+
+	public function notationStore(Request $request, $student, $test, $subject) {
+		$input = $request->all();
+		$input['student_id'] = $student;
+		$input['test_id'] = $test;
+		$this->notationModel->create($input);
+
+		return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test]);
+	}
+
+	public function notationUpdate(Request $request, $student, $test, $subject) {
+		$input = $request->all();
+		$notation = $this->notationModel->where(['test_id' => $test, 'student_id' => $student])->first();
+		$notation->nota = $input['nota'];
+		$notation->save();
+
+		return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test]);
+	}
+
 }

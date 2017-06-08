@@ -14,17 +14,27 @@ class SubjectController extends Controller
 	}
 
 	public function roll() {
-		$data = $this->subjectModel->get();
+		$subject = getSubjectsByTeacher();
+		if($subject !== false) {
+			$data = $subject;
+			$table_content = array(
+				"Nome" => 'name',
+				"Turmas" => 'classes',
+			);
+			$no_tools = true;
+		} else {
+			$data = $this->subjectModel->get();
+			$table_content = array(
+				"Nome" => 'name',
+				"Turmas" => 'classes',
+				"Situação" => 'situation'
+			);
+		}
 		$create = true;
 		$title = 'Materias';
 		$icon = 'fa fa-file-text-o';
 		$controller = 'admin.subject';
-		$table_content = array(
-			"Nome" => 'name',
-			"Turmas" => 'classes',
-			"Situação" => 'situation'
-		);
-		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create'));	
+		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create', 'no_tools'));
 	}
 
 	public function create() {
@@ -40,7 +50,7 @@ class SubjectController extends Controller
 		$subject = $this->subjectModel->create($input);
 		return redirect()->route('admin.subject.edit', $subject->slug);
 	}
-	
+
 	public function edit($slug) {
 		$icon = 'fa fa-file-text-o';
 		$route_form = ['admin.subject.update', $slug];
@@ -54,13 +64,16 @@ class SubjectController extends Controller
 		$input = $request->all();
 		$subject = $this->subjectModel->where('slug', $slug)->first();
 		$subject->update($input);
-		return redirect()->route('admin.subject.edit', $subject->slug);	
+		return redirect()->route('admin.subject.edit', $subject->slug);
 	}
 
 	public function situation($slug, $situation) {
 		$subject = $this->subjectModel->where('slug', $slug)->first();
 		$subject->situation = $situation;
-		$subject->save();	
-		return redirect()->route('admin.subject.list');	
+		if($subject->save()) {
+			return redirect()->route('admin.subject.list')->with('success', 'Situação alterada com sucesso!');
+		} else {
+			return redirect()->route('admin.subject.list')->with('danger', 'Erro ao alterar a situação, tente novamente.');
+		}
 	}
 }

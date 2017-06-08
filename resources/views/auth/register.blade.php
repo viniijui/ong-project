@@ -1,76 +1,63 @@
-@extends('layouts.app')
-
+@extends('layouts.admin.main')
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Register</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/register') }}">
-                        {{ csrf_field() }}
+	@include('layouts.admin.partials.alerts')
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="box box-solid box-primary">
+				<div class="box-header">
+					<i class="fa fa-user"></i>
+					<h3 class="box-title">{!! $title !!}</h3>
+					<div class="btn-group pull-right">
+						<a href="{{ route('admin.user.list') }}" class="btn btn-default btn-xs">
+							<i class="fa fa-undo fa-fw"></i> Voltar
+						</a>
+					</div>
+				</div>
+				<div class="box-body">
+					<div class="col-lg-12">
+						{!! Form::open(['method' => (isset($data) ? 'PUT' : 'POST'), 'route' => (isset($data) ? ['admin.user.edit', 'id' => $data->id] : 'admin.user.store'), 'class' => 'form-horizontal']) !!}
+							<div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+								{!! Form::label('name', 'Nome Completo:') !!}
+								{!! Form::text('name', (isset($data) ? $data->name : null), ['class' => 'form-control', 'required' => 'required']) !!}
+								<small class="text-danger">{{ $errors->first('name') }}</small>
+							</div>
 
-                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <label for="name" class="col-md-4 control-label">Name</label>
+							<div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+								{!! Form::label('email', 'Email:') !!}
+								{!! Form::email('email', (isset($data) ? $data->email : false), ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'eg: foo@bar.com']) !!}
+								<small class="text-danger">{{ $errors->first('email') }}</small>
+							</div>
 
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+							<div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+								{!! Form::label('password', 'Senha:') !!}
+								{!! Form::password('password', ['class' => 'form-control']) !!}
+								<small class="text-danger">{{ $errors->first('password') }}</small>
+							</div>
 
-                                @if ($errors->has('name'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('name') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
+							<div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
+								{!! Form::label('password_confirmation', 'Digite a senha novamente:') !!}
+								{!! Form::password('password_confirmation', ['class' => 'form-control', 'required' => 'required']) !!}
+								<small class="text-danger">{{ $errors->first('password_confirmation') }}</small>
+							</div>
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+							<div class="form-group">
+							    <div class="checkbox{{ $errors->has('is_admin') ? ' has-error' : '' }}">
+							        <label for="is_admin">
+							            {!! Form::checkbox('is_admin', null, null, ['id' => 'is_admin']) !!} Este usuário é administrador?
+							        </label>
+							    </div>
+							    <small class="text-danger">{{ $errors->first('is_admin') }}</small>
+							</div>
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required>
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Register
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+							<div class="row">
+								<div class="btn-group pull-right">
+									{!! Form::submit((isset($data) ? 'Editar' : 'Cadastrar'), ['class' => 'btn btn-primary']) !!}
+								</div>
+							</div>
+						{!! Form::close() !!}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 @endsection

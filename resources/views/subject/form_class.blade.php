@@ -1,6 +1,7 @@
 @extends('layouts.admin.main')
 
 @section('content')
+	@include('layouts.admin.partials.alerts')
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="box box-solid box-primary">
@@ -49,7 +50,19 @@
 								{!! Form::select('teacher2', $array_teacher, (isset($second_teacher) ? $second_teacher : 0), ['id' => 'teacher2', 'class' => 'form-control']) !!}
 								<small class="text-danger">{{ $errors->first('teacher2') }}</small>
 							</div>
-				
+
+							<div class="form-group{{ $errors->has('week_day') ? ' has-error' : '' }}">
+							    {!! Form::label('week_day', 'Dia da Semana:') !!}
+							    {!! Form::select('week_day', [1 => 'Segunda Feira', 2 => 'Terça Feira', 3 => 'Quarta Feira', 4 => 'Quinta Feira', 5 => 'Sexta Feira', 6 => 'Sabado'], (isset($data) ? $data->week_day : null), ['class' => 'form-control', 'required' => 'required']) !!}
+							    <small class="text-danger">{{ $errors->first('week_day') }}</small>
+							</div>
+
+							<div class="form-group{{ $errors->has('credit') ? ' has-error' : '' }}">
+							    {!! Form::label('credit', 'Creditos') !!}
+							    {!! Form::text('credit', (isset($data) ? $data->credit : null), ['class' => 'form-control', 'required' => 'required']) !!}
+							    <small class="text-danger">{{ $errors->first('credit') }}</small>
+							</div>
+
 							<div class="form-group{{ $errors->has('situation') ? ' has-error' : '' }}">
 								{!! Form::label('situation', 'Situação:') !!}
 								{!! Form::select('situation', ['Inativo', 'Ativo'], (isset($data) ? $data->situation : null), ['id' => 'situation', 'class' => 'form-control', 'required' => 'required']) !!}

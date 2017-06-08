@@ -25,6 +25,7 @@ class Employee extends Model
 		'begin_date',
 		'situation',
 		'end_date',
-		'position'
+		'position',
+		'user_id'
 	];
 }

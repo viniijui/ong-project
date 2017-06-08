@@ -11,20 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/', 'HomeController@index');
 
 Route::group(['prefix'=>'admin', 'as' => 'admin.', 'middleware' => 'auth'], function() {
 
-	Route::get('/', function () {
-	    return view('layouts.admin.main');
-	});
+	Route::get('/',['as' => 'main', 'uses' => 'HomeController@index']);
 
 	/*ROUTES TO TEACHER*/
 	Route::group(['prefix'=>'professores',             'as' => 'teacher.'], function() {
@@ -73,7 +66,7 @@ Route::group(['prefix'=>'admin', 'as' => 'admin.', 'middleware' => 'auth'], func
 		Route::get('situation/{slug?}/{action?}', ['as' => 'situation', 'uses' => 'PatrimonyController@situation' ]);
 	});
 	/*---------------*/
-	
+
 	/*ROUTES TO EVENTS*/
 	Route::group(['prefix'=>'eventos', 'as' => 'event.'], function() {
 		Route::get('listar',                      ['as' => 'list',      'uses' => 'EventController@roll'      ]);
@@ -104,6 +97,9 @@ Route::group(['prefix'=>'admin', 'as' => 'admin.', 'middleware' => 'auth'], func
 			Route::put('editar/{slug?}',              ['as' => 'update',    'uses' => 'ClassController@update'    ]);
 			Route::get('excluir/{slug?}',             ['as' => 'delete',    'uses' => 'ClassController@delete'    ]);
 			Route::get('situation/{slug?}/{action?}', ['as' => 'situation', 'uses' => 'ClassController@situation' ]);
+			Route::get('alunos/{id?}', ['as' => 'student', 'uses' => 'ClassController@student' ]);
+			Route::post('alunos/cadastrar/{id?}', ['as' => 'student.store', 'uses' => 'ClassController@studentStore' ]);
+			Route::get('alunos/deletar/{user?}/{id?}', ['as' => 'student.delete', 'uses' => 'ClassController@studentDelete' ]);
 		});
 	});
 	/*---------------*/
@@ -111,15 +107,39 @@ Route::group(['prefix'=>'admin', 'as' => 'admin.', 'middleware' => 'auth'], func
 
 	/*ROUTES TO TESTS*/
 	Route::group(['prefix'=>'provas', 'as' => 'test.'], function() {
-		Route::get('listar',                      ['as' => 'list',      'uses' => 'TestController@roll'      ]);
+		Route::get('listar/{id?}',                      ['as' => 'list',      'uses' => 'TestController@roll'      ]);
 		Route::get('cadastrar',                   ['as' => 'create',    'uses' => 'TestController@create'    ]);
 		Route::post('cadastrar',                  ['as' => 'store',     'uses' => 'TestController@store'     ]);
 		Route::get('editar/{slug?}',              ['as' => 'edit',      'uses' => 'TestController@edit'      ]);
 		Route::put('editar/{slug?}',              ['as' => 'update',    'uses' => 'TestController@update'    ]);
 		Route::get('excluir/{slug?}',             ['as' => 'delete',    'uses' => 'TestController@delete'    ]);
 		Route::get('situation/{slug?}/{action?}', ['as' => 'situation', 'uses' => 'TestController@situation' ]);
+		Route::get('notas/{subject?}/{test?}',    ['as' => 'notation', 'uses' => 'TestController@notation'  ]);
+		Route::post('notas/{student?}/{test?}/{subject?}',    ['as' => 'notation.store', 'uses' => 'TestController@notationStore' ]);
+		Route::post('notas/editar/{student?}/{test?}/{subject?}',    ['as' => 'notation.update', 'uses' => 'TestController@notationUpdate' ]);
+	});
+
+	/*ROUTES TO RESERVES*/
+	Route::group(['prefix'=>'reservas', 'as' => 'reserve.'], function() {
+		Route::get('listar/{type?}/{aux?}',       ['as' => 'list',      'uses' => 'ReserveController@roll'      ]);
+		Route::get('cadastrar/{type?}/{aux?}',    ['as' => 'create',    'uses' => 'ReserveController@create'    ]);
+		Route::post('cadastrar',                  ['as' => 'store',     'uses' => 'ReserveController@store'     ]);
+		Route::get('editar/{slug?}',              ['as' => 'edit',      'uses' => 'ReserveController@edit'      ]);
+		Route::put('editar/{slug?}',              ['as' => 'update',    'uses' => 'ReserveController@update'    ]);
+		Route::get('excluir/{slug?}',             ['as' => 'delete',    'uses' => 'ReserveController@delete'    ]);
+		Route::get('situation/{slug?}/{action?}', ['as' => 'situation', 'uses' => 'ReserveController@situation' ]);
+	});
+	/*---------------*/
+
+	/*ROUTES TO RESERVES*/
+	Route::group(['prefix'=>'usuarios', 'as' => 'user.'], function() {
+		Route::get('listar/',        ['as' => 'list',   'uses' => 'Auth\RegisterController@roll'   ]);
+		Route::get('cadastrar/',   ['as' => 'create',   'uses' => 'Auth\RegisterController@create2'   ]);
+		Route::post('cadastrar/',   ['as' => 'store', 'uses' => 'Auth\RegisterController@store' ]);
+		Route::get('editar/{id?}',   ['as' => 'edit',   'uses' => 'Auth\RegisterController@edit'   ]);
+		Route::put('editar/{id?}',   ['as' => 'update', 'uses' => 'Auth\RegisterController@update' ]);
+		Route::get('excluir/{id?}',  ['as' => 'delete', 'uses' => 'Auth\RegisterController@delete' ]);
 	});
 	/*---------------*/
 
 });
-

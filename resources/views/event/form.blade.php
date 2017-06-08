@@ -1,6 +1,7 @@
 @extends('layouts.admin.main')
 
 @section('content')
+	@include('layouts.admin.partials.alerts')
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="box box-solid box-primary">
@@ -27,7 +28,7 @@
 						        {!! Form::select('situation', ['Inativo', 'Ativo'], (isset($data) ? $data->situation : 1), ['id' => 'situation', 'class' => 'form-control', 'required' => 'required']) !!}
 						        <small class="text-danger">{{ $errors->first('situation') }}</small>
 						    </div>
-						   	
+
 						   	<div class="form-group{{ $errors->has('organizer') ? ' has-error' : '' }}">
 						   	    {!! Form::label('organizer', 'Responsável:') !!}
 						   	    {!! Form::text('organizer', (isset($data) ? $data->organizer : null), ['class' => 'form-control', 'required' => 'required']) !!}

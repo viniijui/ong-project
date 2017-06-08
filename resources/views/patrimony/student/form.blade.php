@@ -9,7 +9,7 @@
 					<i class="fa {{$icon}}"></i>
 					<h3 class="box-title">{{$title}}</h3>
 					<div class="btn-group pull-right">
-						<a href="{{ route('admin.patrimony.list') }}" class="btn btn-default btn-xs">
+						<a href="{{ route('admin.student.list') }}" class="btn btn-default btn-xs">
 							<i class="fa fa-undo fa-fw"></i> Voltar
 						</a>
 					</div>
@@ -29,19 +29,23 @@
 						        <small class="text-danger">{{ $errors->first('situation') }}</small>
 						    </div>
 
-						   	<div class="form-group{{ $errors->has('key') ? ' has-error' : '' }}">
-						   	    {!! Form::label('key', 'Ńº do Patrimonio:') !!}
-						   	    {!! Form::text('key', (isset($data) ? $data->key : null), ['class' => 'form-control', 'required' => 'required']) !!}
-						   	    <small class="text-danger">{{ $errors->first('key') }}</small>
+						   	<div class="form-group{{ $errors->has('cpf') ? ' has-error' : '' }}">
+						   	    {!! Form::label('cpf', 'CPF:') !!}
+						   	    {!! Form::text('cpf', (isset($data) ? $data->cpf : null), ['class' => 'form-control', 'required' => 'required']) !!}
+						   	    <small class="text-danger">{{ $errors->first('cpf') }}</small>
 						   	</div>
 
-						   	<div class="form-group{{ $errors->has('price') ? ' has-error' : '' }}">
-						   	    {!! Form::label('price', 'Preço:') !!}
-						   	    {!! Form::text('price', (isset($data) ? $data->price : null), ['class' => 'form-control', 'required' => 'required']) !!}
-						   	    <small class="text-danger">{{ $errors->first('price') }}</small>
-						   	</div>
+							<div class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
+							    {!! Form::label('address', 'Endereço:') !!}
+							    {!! Form::text('address', (isset($data) ? $data->address : false), ['class' => 'form-control', 'required' => 'required']) !!}
+							    <small class="text-danger">{{ $errors->first('address') }}</small>
+							</div>
 
-							<input name="qtd" type="hidden" value="1">
+							<div class="form-group{{ $errors->has('begin_date') ? ' has-error' : '' }}">
+							    {!! Form::label('begin_date', 'Data de admissão:') !!}
+							    {!! Form::date('begin_date', (isset($data) ? $data->begin_date : null), ['class' => 'form-control', 'required' => 'required']) !!}
+							    <small class="text-danger">{{ $errors->first('begin_date') }}</small>
+							</div>
 
 						    <div class="row">
 							    <div class="btn-group pull-right">

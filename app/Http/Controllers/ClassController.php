@@ -6,41 +6,59 @@ use Illuminate\Http\Request;
 use OngSystem\SubjectTime;
 use OngSystem\Teacher;
 use OngSystem\Subject;
+use OngSystem\Student;
 
 class ClassController extends Controller
 {
 	private $subjectTimeModel;
 	private $subjectModel;
 	private $teacherModel;
+	private $studentModel;
 
-	public function __construct(SubjectTime $subjectTimeModel, Teacher $teacherModel, Subject $subjectModel)
+	public function __construct(SubjectTime $subjectTimeModel, Teacher $teacherModel, Subject $subjectModel, Student $studentModel)
 	{
 		$this->subjectTimeModel = $subjectTimeModel;
 		$this->subjectModel = $subjectModel;
 		$this->teacherModel = $teacherModel;
+		$this->studentModel = $studentModel;
 	}
 
 	public function roll($slug ='') {
 		if ($slug != '') {
 			$subject = $this->subjectModel->select('id', 'name')->where('slug', $slug)->first();
 			$title = 'Turmas da materia: '.$subject->name;
-			$data = $this->subjectTimeModel->where('subject_id', $subject->id)->get();
+			if(\Auth::user()->hasRole('teacher')) {
+				$teacher = getTeacherByUserID();
+				$data = $this->subjectTimeModel->where(['subject_id' => $subject->id, 'teacher_id' => $teacher->id])->get();
+			} else {
+				$data = $this->subjectTimeModel->where('subject_id', $subject->id)->get();
+			}
 			$back = 'admin.subject.list';
-		} else {
-			$data = $this->subjectTimeModel->get();
-			$title = 'Turmas';
+			$no_tools = true;
 		}
+
 		$create = true;
 		$icon = 'fa fa-calendar-o';
 		$controller = 'admin.subject.time';
-		$table_content = array(
-			"Ano" => 'year',
-			"Semestre" => 'half_class',
-			"Professor" => 'teacher_class',
-			"Situação" => 'situation'
-		);
-	
-		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create', 'back'));	
+
+		if(\Auth::user()->hasRole('teacher')) {
+			$table_content = array(
+				"Ano" => 'year',
+				"Semestre" => 'half_class',
+				"Provas" => 'subject_tests',
+				"Situação" => 'situation'
+			);
+		} else {
+			$table_content = array(
+				"Ano" => 'year',
+				"Semestre" => 'half_class',
+				"Professor" => 'teacher_class',
+				"Situação" => 'situation',
+				"Alunos" => 'subject_student'
+			);
+		}
+
+		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create', 'back', 'no_tools'));
 	}
 
 	public function create() {
@@ -77,7 +95,7 @@ class ClassController extends Controller
 		$subject = $this->subjectTimeModel->create($input);
 		return redirect()->route('admin.subject.time.edit', $subject->id);
 	}
-	
+
 	public function edit($slug) {
 		$icon = 'fa fa-calendar-o';
 		$route_form = ['admin.subject.time.update', $slug];
@@ -116,14 +134,41 @@ class ClassController extends Controller
 			$input['teacher2_id'] = $teacher->id;
 		}
 		$subject = $this->subjectTimeModel->where('id', $slug)->first();
-		$subject->update($input);
-		return redirect()->route('admin.subject.time.edit', $subject->id);	
+		if($subject->update($input)) {
+			return redirect()->route('admin.subject.time.edit', $subject->id)->with('success', 'Registro alterado com sucesso!');
+		} else {
+			return redirect()->route('admin.subject.time.edit', $subject->id)->with('danger', 'Erro ao alterar registro, tente novamente.');
+		}
 	}
 
-	public function situation($slug, $situation) {
-		$subject = $this->subjectTimeModel->where('slug', $slug)->first();
+	public function situation($id, $situation) {
+		$subject = $this->subjectTimeModel->where('id', $id)->first();
 		$subject->situation = $situation;
-		$subject->save();	
-		return redirect()->route('admin.subject.time.list');	
+		if($subject->save()) {
+			return redirect()->route('admin.subject.time.list')->with('success', 'Situação alterada com sucesso!');
+		} else {
+			return redirect()->route('admin.subject.time.list')->with('danger', 'Erro ao alterar a situação, tente novamente.');
+		}
+	}
+
+	public function student($id) {
+		$data = $this->subjectTimeModel->find($id)->student()->get();
+		$student = $this->studentModel->get();
+		$options = [];
+		foreach ($student as $row) {
+			$options[$row->id] = $row->name;
+		}
+		$title = 'Alunos';
+		$icon = 'fa-users';
+		return view('subject.student', compact('data', 'title', 'icon', 'student', 'id', 'options'));
+	}
+	public function studentStore(Request $request, $id) {
+		$input = $request->all();
+		$data = $this->subjectTimeModel->where('id', $id)->first()->student()->attach($input['student']);
+		return redirect()->route('admin.subject.time.student', $id)->with('success', 'Aluno vinculado com sucesso');
+	}
+	public function studentDelete($student, $id) {
+		$data = $this->subjectTimeModel->where('id', $id)->first()->student()->detach($student);
+		return redirect()->route('admin.subject.time.student', $id)->with('success', 'Aluno desvinculado!');
 	}
 }

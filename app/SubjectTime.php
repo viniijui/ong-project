@@ -13,6 +13,12 @@ class SubjectTime extends Model
 		'teacher2_id',
 		'situation',
 		'year',
-		'half'
+		'half',
+		'week_day',
+		'credit'
 	];
+
+	public function student()	{
+		return $this->belongsToMany('OngSystem\Student')->withTimestamps();
+	}
 }

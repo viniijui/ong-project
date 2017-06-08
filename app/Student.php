@@ -27,4 +27,8 @@ class Student extends Model
 		'end_date',
 		'type'
 	];
+
+	public function subjectTime()	{
+		return $this->belongsToMany('OngSysten\SubjectTime')->withTimestamps();
+	}
 }
