@@ -10,7 +10,7 @@
 					<h3 class="box-title">{{$title}}</h3>
 					@if (isset($back) and $back != false)
 						<div class="btn-group pull-right">
-							<a href="{{ route('admin.subject.time.list') }}" class="btn btn-default btn-xs">
+							<a href="{{ route('admin.subject.time.list', $back) }}" class="btn btn-default btn-xs">
 								<i class="fa fa-undo fa-fw"></i> Voltar
 							</a>
 						</div>
@@ -23,12 +23,12 @@
 
 							<div class="form-group{{ $errors->has('subject') ? ' has-error' : '' }}">
 							    {!! Form::label('subject', 'Materia:') !!}
-							    {!! Form::select('subject', $array_subject,  (isset($subject_checked) ? $subject_checked : null), ['id' => 'subject', 'class' => 'form-control', 'required' => 'required']) !!}
+							    {!! Form::select('subject', $array_subject,  (isset($data) ? $data->subject_id : null), ['id' => 'subject', 'class' => 'form-control', 'required' => 'required']) !!}
 							    <small class="text-danger">{{ $errors->first('subject') }}</small>
 							</div>
 							<div class="form-group{{ $errors->has('year') ? ' has-error' : '' }}">
 								{!! Form::label('year', 'Ano:') !!}
-								{!! Form::text('year', (isset($data) ? $data->year : false), ['class' => 'form-control', 'required' => 'reqired']) !!}
+								{!! Form::number('year', (isset($data) ? $data->year : false), ['class' => 'form-control', 'required' => 'reqired', 'min' => 0]) !!}
 								<small class="text-danger">{{ $errors->first('year') }}</small>
 							</div>
 
@@ -51,16 +51,16 @@
 								<small class="text-danger">{{ $errors->first('teacher2') }}</small>
 							</div>
 
+							<div class="form-group{{ $errors->has('place') ? ' has-error' : '' }}">
+							    {!! Form::label('place', 'Local:') !!}
+							    {!! Form::text('place', (isset($data) ? $data->place : null), ['class' => 'form-control', 'required' => 'required']) !!}
+							    <small class="text-danger">{{ $errors->first('place') }}</small>
+							</div>
+
 							<div class="form-group{{ $errors->has('week_day') ? ' has-error' : '' }}">
 							    {!! Form::label('week_day', 'Dia da Semana:') !!}
 							    {!! Form::select('week_day', [1 => 'Segunda Feira', 2 => 'Terça Feira', 3 => 'Quarta Feira', 4 => 'Quinta Feira', 5 => 'Sexta Feira', 6 => 'Sabado'], (isset($data) ? $data->week_day : null), ['class' => 'form-control', 'required' => 'required']) !!}
 							    <small class="text-danger">{{ $errors->first('week_day') }}</small>
-							</div>
-
-							<div class="form-group{{ $errors->has('credit') ? ' has-error' : '' }}">
-							    {!! Form::label('credit', 'Creditos') !!}
-							    {!! Form::text('credit', (isset($data) ? $data->credit : null), ['class' => 'form-control', 'required' => 'required']) !!}
-							    <small class="text-danger">{{ $errors->first('credit') }}</small>
 							</div>
 
 							<div class="form-group{{ $errors->has('situation') ? ' has-error' : '' }}">

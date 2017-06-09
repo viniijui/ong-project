@@ -37,7 +37,7 @@
 				</li>
 				<li>
 					<a href="{{route('admin.subject.list')}}">
-						<i class="fa fa-file-text-o fa-fw"></i> <span>Materias</span>
+						<i class="fa fa-file-text-o fa-fw"></i> <span>Matérias</span>
 					</a>
 				</li>
 				<li>
@@ -50,23 +50,23 @@
 			<li class="treeview">
 				<a href="#">
 				<i class="fa fa-archive"></i>
-				<span>Patrimonios</span>
+				<span>Patrimônios</span>
 				<span class="pull-right-container">
 				  <i class="fa fa-angle-left pull-right"></i>
 				</span>
 				</a>
 				<ul class="treeview-menu">
-					@if (Auth::user()->hasRole('root') or Auth::user()->hasRole('admin'))
+					@if (Auth::user()->hasRole('root') or Auth::user()->hasRole('employee'))
 						<li>
 							<a href="{{route('admin.patrimony.list')}}">
-								<i class="fa fa-archive fa-fw"></i> <span>Cadastro de patrimonios</span>
+								<i class="fa fa-archive fa-fw"></i> <span>Cadastro de patrimônios</span>
 							</a>
 						</li>
 					@endif
-					@if (Auth::user()->hasRole('root') or Auth::user()->hasRole('teacher') or Auth::user()->hasRole('admin'))
+					@if (Auth::user()->hasRole('root') or Auth::user()->hasRole('teacher') or Auth::user()->hasRole('employee'))
 						<li>
 							<a href="{{route('admin.reserve.create')}}">
-								<i class="fa fa-check-square-o fa-fw"></i> <span>Reserva de patrimonios</span>
+								<i class="fa fa-check-square-o fa-fw"></i> <span>Reserva de patrimônios</span>
 							</a>
 						</li>
 					@endif
@@ -79,7 +79,6 @@
 					</a>
 				</li>
 			@endrole
-
 
 			@if (Auth::user()->hasRole('root') or Auth::user()->hasRole('employee') or Auth::user()->hasRole('admin'))
 				<li>

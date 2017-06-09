@@ -15,7 +15,7 @@ class SubjectTime extends Model
 		'year',
 		'half',
 		'week_day',
-		'credit'
+		'place'
 	];
 
 	public function student()	{

@@ -42,10 +42,11 @@
 							</div>
 
 							<div class="form-group{{ $errors->has('begin_date') ? ' has-error' : '' }}">
-								{!! Form::label('begin_date', 'Data de admissão:') !!}
+								{!! Form::label('begin_date', 'Data de entrada na ONG:') !!}
 								{!! Form::date('begin_date', (isset($data) ? $data->begin_date : null), ['class' => 'form-control', 'required' => 'required']) !!}
 								<small class="text-danger">{{ $errors->first('begin_date') }}</small>
 							</div>
+
 							<div class="row">
 								<div class="btn-group pull-right">
 									{!! Form::submit((isset($data) ? 'Editar' : 'Cadastrar'), ['class' => 'btn btn-primary']) !!}

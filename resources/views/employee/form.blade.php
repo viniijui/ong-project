@@ -42,7 +42,7 @@
 							</div>
 
 							<div class="form-group{{ $errors->has('begin_date') ? ' has-error' : '' }}">
-								{!! Form::label('begin_date', 'Data de admissão:') !!}
+								{!! Form::label('begin_date', 'Data entrada na ONG:') !!}
 								{!! Form::date('begin_date', (isset($data) ? $data->begin_date : null), ['class' => 'form-control', 'required' => 'required']) !!}
 								<small class="text-danger">{{ $errors->first('begin_date') }}</small>
 							</div>
@@ -69,16 +69,4 @@
 			</div>
 		</div>
 	</div>
-@endsection
-
-@section('js')
-	<script src="{{ url('asset/ckeditor/ckeditor.js') }}"></script>
-	<script>
-		CKEDITOR.replace('ckeditor', {
-			filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-			filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token={{csrf_token()}}',
-			filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-			filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token={{csrf_token()}}'
-		});
-	</script>
 @endsection

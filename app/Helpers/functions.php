@@ -44,10 +44,11 @@ function getTeacherByUserID() {
 function getSubjectsByTeacher() {
 	if(getTeacherByUserID() == false) return false;
 	$subject = \DB::connection('mysql')->select(DB::raw('
-		SELECT sub.*, subt.week_day as day FROM subjects AS sub, subject_times AS subt
+		SELECT  distinct(sub.name) as name, sub.slug as slug, sub.id as id, subt.week_day as day FROM subjects AS sub, subject_times AS subt
 		WHERE subt.teacher_id = '.getTeacherByUserID()->id.'
 		AND sub.id = subt.subject_id
-		ORDER BY sub.id
+		AND subt.year >= YEAR(CURDATE())
+		AND subt.situation = 1
 	'));
 
 	if(!$subject) return false;

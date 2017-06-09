@@ -1,9 +1,8 @@
 </div>
 <!-- /.content-wrapper -->
-  <footer class="main-footer">
+  <footer style="padding: 10px;position:bottom;">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 2.3.8
+      <b>Versão</b> 1.0.0
     </div>
-    <strong>Copyright &copy; 2014-2016 <a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights
-    reserved.
+    <strong>Copyright &copy; 2017 ONG Administrativo.</strong> Todos os direitos reservados.
   </footer>

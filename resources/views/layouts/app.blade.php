@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'ONG') }}</title>
+    <title>ONG - Administrativo</title>
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
@@ -35,8 +35,8 @@
                     </button>
 
                     <!-- Branding Image -->
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'ONG') }}
+                    <a class="navbar-brand" href="javascript:void(0)">
+                        ONG - Administrativo
                     </a>
                 </div>
             </div>

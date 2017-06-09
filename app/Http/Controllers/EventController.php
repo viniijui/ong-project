@@ -38,8 +38,12 @@ class EventController extends Controller
 
 	public function store(Request $request) {
 		$input = $request->all();
-		$event = $this->eventModel->create($input);
-		return redirect()->route('admin.event.edit', $event->slug);
+		$event = $this->eventModel->fill($input);
+		if($event->save()) {
+			return redirect()->route('admin.event.edit', $event->slug)->with('success', 'Evento cadastrado com sucesso!');
+		} else {
+			return redirect()->route('admin.event.edit', $event->slug)->with('danger', 'Erro ao cadastrar evento. Por gentileza, tente novamente.');
+		}
 	}
 
 	public function edit($slug) {
@@ -54,14 +58,29 @@ class EventController extends Controller
 	public function update(Request $request, $slug) {
 		$input = $request->all();
 		$event = $this->eventModel->where('slug', $slug)->first();
-		$event->update($input);
-		return redirect()->route('admin.event.edit', $event->slug);
+		if(	$event->update($input)) {
+			return redirect()->route('admin.event.edit', $event->slug)->with('success', 'Evento alterado com sucesso!');
+		} else {
+			return redirect()->route('admin.event.edit', $event->slug)->with('danger', 'Erro ao alterar evento. Por gentileza, tente novamente.');
+		}
+	}
+
+	public function delete($slug) {
+		$event = $this->eventModel->where('slug', $slug)->first();
+		if(	$event->delete()) {
+			return redirect()->route('admin.event.list')->with('success', 'Evento excluído com sucesso!');
+		} else {
+			return redirect()->route('admin.event.list')->with('danger', 'Erro ao excluír evento. Por gentileza, tente novamente.');
+		}
 	}
 
 	public function situation($slug, $situation) {
 		$event = $this->eventModel->where('slug', $slug)->first();
 		$event->situation = $situation;
-		$event->save();
-		return redirect()->route('admin.event.list');
+		if(	$event->save()) {
+			return redirect()->route('admin.event.list')->with('success', 'Situação alterada com sucesso!');
+		} else {
+			return redirect()->route('admin.event.list')->with('danger', 'Erro ao alterar situação. Por gentileza, tente novamente.');
+		}
 	}
 }

@@ -81,8 +81,13 @@ class TestController extends Controller
 		$input = $request->all();
 		$input['subject_time_id'] =$input['subject'];
 		$input['teacher_id'] = getTeacherByUserID()->id;
-		$test = $this->testModel->create($input);
-		return redirect()->route('admin.test.edit', $test->slug);
+		$test = $this->testModel->fill($input);
+		if($test->save()) {
+			return redirect()->route('admin.test.edit', $test->slug)->with('success', 'Prova cadastrada com sucessso!');
+		} else {
+			return redirect()->route('admin.test.edit', $test->slug)->with('danger', 'Erro ao cadastrar prova. Por gentileza, tente novamente.');
+		}
+
 	}
 
 	public function edit($slug) {
@@ -111,17 +116,22 @@ class TestController extends Controller
 		$input['subject_time_id'] =$input['subject'];
 		$input['teacher_id'] = getTeacherByUserID()->id;
 		$test = $this->testModel->where('slug', $slug)->first();
-		$test->update($input);
-		return redirect()->route('admin.test.edit', $test->slug);
+		if($test->update($input)) {
+			return redirect()->route('admin.test.edit', $test->slug)->with('success', 'Prova cadastrada com sucessso!');
+		} else {
+			return redirect()->route('admin.test.edit', $test->slug)->with('danger', 'Erro ao cadastrar prova. Por gentileza, tente novamente.');
+		}
 	}
 
 	public function situation($slug, $situation) {
 
 		$test = $this->testModel->where('slug', $slug)->first();
 		$test->situation = $situation;
-		$test->save();
-		return redirect()->route('admin.test.list');
-
+		if($test->save()) {
+			return redirect()->route('admin.test.list')->with('success', 'Situação alterada com sucesso!');
+		} else {
+			return redirect()->route('admin.test.list')->with('danger', 'Erro ao alterar situação. Por gentileza, tente novamente.');
+		}
 	}
 
 	public function notation($subject, $test) {
@@ -135,18 +145,22 @@ class TestController extends Controller
 		$input = $request->all();
 		$input['student_id'] = $student;
 		$input['test_id'] = $test;
-		$this->notationModel->create($input);
-
-		return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test]);
+		$notation = $this->notationModel->fill($input);
+		if($notation->save()) {
+			return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test])->with('success', 'Nota cadastrado com sucessso!');
+		} else {
+			return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test])->with('danger', 'Erro ao cadastrar Nota. Por gentileza, tente novamente.');
+		}
 	}
 
 	public function notationUpdate(Request $request, $student, $test, $subject) {
 		$input = $request->all();
 		$notation = $this->notationModel->where(['test_id' => $test, 'student_id' => $student])->first();
 		$notation->nota = $input['nota'];
-		$notation->save();
-
-		return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test]);
+		if($notation->save()) {
+			return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test])->with('success', 'Nota editada com sucessso!');
+		} else {
+			return redirect()->route('admin.test.notation', ['subject' => $subject, 'test' => $test])->with('danger', 'Erro ao editar Nota. Por gentileza, tente novamente.');
+		}
 	}
-
 }

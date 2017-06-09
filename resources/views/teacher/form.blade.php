@@ -1,6 +1,7 @@
 @extends('layouts.admin.main')
 
 @section('content')
+	@include('layouts.admin.partials.alerts')
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="box box-solid box-primary">
@@ -30,7 +31,7 @@
 
 							<div class="form-group{{ $errors->has('cpf') ? ' has-error' : '' }}">
 								{!! Form::label('cpf', 'CPF:') !!}
-								{!! Form::text('cpf', (isset($data) ? $data->cpf : null), ['class' => 'form-control', 'required' => 'required']) !!}
+								{!! Form::text('cpf', (isset($data) ? $data->cpf : null), ['id' => 'cpf', 'class' => 'form-control', 'required' => 'required']) !!}
 								<small class="text-danger">{{ $errors->first('cpf') }}</small>
 							</div>
 
@@ -72,13 +73,8 @@
 @endsection
 
 @section('js')
-	<script src="{{ url('asset/ckeditor/ckeditor.js') }}"></script>
+	<script src="https://igorescobar.github.io/jQuery-Mask-Plugin/js/jquery.mask.min.js"></script>
 	<script>
-		CKEDITOR.replace('ckeditor', {
-			filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
-			filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token={{csrf_token()}}',
-			filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
-			filebrowserUploadUrl: '/laravel-filemanager/upload?type=Files&_token={{csrf_token()}}'
-		});
+		$('#cpf').mask('000.000.000-00', {reverse: true});
 	</script>
 @endsection

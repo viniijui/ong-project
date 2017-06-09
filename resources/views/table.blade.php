@@ -51,6 +51,18 @@
 														@endif
 													</div>
 												</td>
+											@elseif ($value == 'situation_aux')
+													<td>
+														<div class="btn-group">
+															@if ($row2->situation == true)
+																<a href="{{route($controller.'.situation', ['slug' => ($row2->slug != '' ? $row2->slug : $row2->id), 'action' => 0, 'suject' => $slug])}}" class="btn btn-default btn-xs"><i class="fa fa-eye-slash fa-fw"></i></a>
+																<a href="" class="btn btn-success btn-xs disabled"><i class="fa fa-eye fa-fw"></i></a>
+															@else
+																<a href="" class="btn btn-danger btn-xs disabled"><i class="fa fa-eye-slash fa-fw"></i></a>
+																<a href="{{route($controller.'.situation', ['slug' => ($row2->slug != '' ? $row2->slug : $row2->id), 'action' => 1, 'suject' => $slug])}}" class="btn btn-default btn-xs "><i class="fa fa-eye fa-fw"></i></a>
+															@endif
+														</div>
+													</td>
 											@elseif($value == 'teacher_class')
 												<td>
 													<p>{!!getTeacherNameByID($row2->teacher_id)!!}</p>
@@ -121,7 +133,7 @@
 													@endif
 													@if ($row2->hasRole('employee'))
 														<p class="label label-xs label-info" style="margin:0 5px;">
-															Funcionario
+															Funcionário
 														</p>
 													@endif
 												</td>

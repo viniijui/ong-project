@@ -99,12 +99,12 @@ class RegisterController extends Controller
 		if (isset($data['is_admin']) and $data['is_admin'] = 1) {
 			setRoleToUser($user->id, 'root');
 		}
-		return redirect()->route('admin.user.edit', $user->id);
+		return redirect()->route('admin.user.edit', $user->id)->with('success', 'Usuário cadastrado com sucesso!');
 	}
 
 	public function create2()
 	{
-		$title = 'Cadstrar usuário';
+		$title = 'Cadastrar usuário';
 		return view('auth.register', compact('title'));
 	}
 
@@ -144,7 +144,16 @@ class RegisterController extends Controller
 			setRoleToUser($user->id, 'root');
 		}
 
-		return redirect()->route('admin.user.edit', $user->id);
+		return redirect()->route('admin.user.edit', $user->id)->with('success', 'Usuário alterado com sucesso!');
+	}
+
+	public function delete($id) {
+		$user = User::where('id', $id)->first();
+		if($user->delete()) {
+			return redirect()->route('admin.user.list')->with('success', 'Usuário excluído com sucesso!');
+		} else {
+			return redirect()->route('admin.user.list')->with('danger', 'Erro ao excluir usuário, tente novamente.');
+		}
 	}
 
 	public function roll()

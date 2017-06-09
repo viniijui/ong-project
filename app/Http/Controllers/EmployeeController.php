@@ -21,7 +21,7 @@ class EmployeeController extends Controller
 	{
 		$data = $this->employeeModel->get();
 		$create = true;
-		$title = 'Funcionarios';
+		$title = 'Funcionários';
 		$icon = 'fa fa-user-circle';
 		$controller = 'admin.employee';
 		$table_content = array(
@@ -32,7 +32,7 @@ class EmployeeController extends Controller
 	}
 
 	public function create() {
-		$title = 'Cadastrar funcionario';
+		$title = 'Cadastrar funcionário';
 		$icon = 'fa fa-user-circle';
 		$route_form = 'admin.employee.store';
 		$back = 'admin.employee.list';
@@ -49,8 +49,12 @@ class EmployeeController extends Controller
 	public function store(Request $request) {
 		$input = $request->all();
 		setRoleToUser($input['user_id'], 'employee');
-		$employee = $this->employeeModel->create($input);
-		return redirect()->route('admin.employee.edit', $employee->slug);
+		$employee = $this->employeeModel->fill($input);
+		if($employee->save()) {
+			return redirect()->route('admin.employee.edit', $employee->slug)->with('success', 'Funcionário cadastrado com sucesso!');
+		} else {
+			return redirect()->route('admin.employee.edit', $employee->slug)->with('danger', 'Erro ao alterar funcionário, tente novamente.');
+		}
 	}
 
 	public function edit($slug) {
@@ -67,9 +71,9 @@ class EmployeeController extends Controller
 		$input = $request->all();
 		$employee = $this->employeeModel->where('slug', $slug)->first();
 		if($employee->update($input)) {
-			return redirect()->route('admin.employee.edit', $employee->slug)->with('success', 'Registro alterado com sucesso!');
+			return redirect()->route('admin.employee.edit', $employee->slug)->with('success', 'Funcionário alterado com sucesso!');
 		} else {
-			return redirect()->route('admin.employee.edit', $employee->slug)->with('danger', 'Erro ao alterar registro, tente novamente.');
+			return redirect()->route('admin.employee.edit', $employee->slug)->with('danger', 'Erro ao alterar funcionário, tente novamente.');
 		}
 	}
 
@@ -85,7 +89,11 @@ class EmployeeController extends Controller
 
 	public function delete($slug) {
 		$employee = $this->employeeModel->where('slug', $slug)->first();
-		$employee->delete();
+		if($employee->delete()) {
+			return redirect()->route('admin.employee.list')->with('success', 'Funcionário excluído com sucesso!');
+		} else {
+			return redirect()->route('admin.employee.list')->with('danger', 'Erro ao excluir funcionário, tente novamente.');
+		}
 		return redirect()->route('admin.employee.list');
 	}
 }

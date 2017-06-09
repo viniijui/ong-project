@@ -24,7 +24,7 @@ class StudentController extends Controller
 			"Nome" => 'name',
 			"Situação" => 'situation'
 		);
-		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create'));	
+		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create'));
 	}
 
 	public function create() {
@@ -37,10 +37,14 @@ class StudentController extends Controller
 
 	public function store(Request $request) {
 		$input = $request->all();
-		$student = $this->studentModel->create($input);
-		return redirect()->route('admin.student.edit', $student->slug);
+		$student = $this->studentModel->fill($input);
+		if($this->studentModel->save()) {
+			return redirect()->route('admin.student.edit', $student->slug)->with('success', 'Aluno Cadastrado com sucesso!');
+		} else {
+			return redirect()->route('admin.student.edit', $student->slug)->with('danger', 'Erro ao cadastrar aluno, por gentileza, tente novamente.');
+		}
 	}
-	
+
 	public function edit($slug) {
 		$icon = 'fa fa-user';
 		$route_form = ['admin.student.update', $slug];
@@ -53,16 +57,31 @@ class StudentController extends Controller
 	public function update(Request $request, $slug) {
 		$input = $request->all();
 		$student = $this->studentModel->where('slug', $slug)->first();
-		$student->update($input);
-		return redirect()->route('admin.student.edit', $student->slug);	
+		if($student->update($input)) {
+			return redirect()->route('admin.student.edit', $student->slug)->with('success', 'Aluno editado com sucesso!');
+		} else {
+			return redirect()->route('admin.student.edit', $student->slug)->with('danger', 'Erro ao ediar aluno, por gentileza, tente novamente.');
+		}
+	}
+
+	public function delete($slug) {
+		$student = $this->studentModel->where('slug', $slug)->first();
+		if($student->delete()) {
+			return redirect()->route('admin.student.list')->with('success', 'Aluno excluído com sucesso!');
+		} else {
+			return redirect()->route('admin.student.list')->with('danger', 'Erro ao excluir aluno, por gentileza, tente novamente.');
+		}
 	}
 
 	public function situation($slug, $situation) {
-		
+
 		$student = $this->studentModel->where('slug', $slug)->first();
 		$student->situation = $situation;
-		$student->save();	
-		return redirect()->route('admin.student.list');	
+		if($student->save()) {
+			return redirect()->route('admin.student.list')->with('success', 'Situação Alterada com sucesso!');
+		} else {
+			return redirect()->route('admin.student.list')->with('danger', 'Erro ao alterar situação. Por gentileza, tente novamente.');
+		}
 
 	}
 }

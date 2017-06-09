@@ -30,15 +30,15 @@ class ClassController extends Controller
 			if(\Auth::user()->hasRole('teacher')) {
 				$teacher = getTeacherByUserID();
 				$data = $this->subjectTimeModel->where(['subject_id' => $subject->id, 'teacher_id' => $teacher->id])->get();
+				$no_tools = true;
 			} else {
 				$data = $this->subjectTimeModel->where('subject_id', $subject->id)->get();
 			}
 			$back = 'admin.subject.list';
-			$no_tools = true;
 		}
 
 		$create = true;
-		$icon = 'fa fa-calendar-o';
+		$icon = 'fa fa-file-text-o';
 		$controller = 'admin.subject.time';
 
 		if(\Auth::user()->hasRole('teacher')) {
@@ -53,12 +53,12 @@ class ClassController extends Controller
 				"Ano" => 'year',
 				"Semestre" => 'half_class',
 				"Professor" => 'teacher_class',
-				"Situação" => 'situation',
+				"Situação" => 'situation_aux',
 				"Alunos" => 'subject_student'
 			);
 		}
 
-		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create', 'back', 'no_tools'));
+		return view('table', compact('data', 'title', 'icon', 'table_content', 'controller', 'create', 'back', 'no_tools', 'slug'));
 	}
 
 	public function create() {
@@ -92,15 +92,20 @@ class ClassController extends Controller
 			$teacher = $this->teacherModel->select('slug', 'name', 'id')->where('slug', $input['teacher2'])->first();
 			$input['teacher2_id'] = $teacher->id;
 		}
-		$subject = $this->subjectTimeModel->create($input);
-		return redirect()->route('admin.subject.time.edit', $subject->id);
+		$subject = $this->subjectTimeModel->fill($input);
+		if($subject->save()) {
+			return redirect()->route('admin.subject.time.edit', $subject->id)->with('success', 'Turma cadastrada com sucesso!');
+		} else {
+			return redirect()->route('admin.subject.time.edit', $subject->id)->with('danger', 'Erro ao cadastrar turma, tente novamente.');
+		}
 	}
 
 	public function edit($slug) {
 		$icon = 'fa fa-calendar-o';
 		$route_form = ['admin.subject.time.update', $slug];
-		$back = 'admin.subject.time.list';
 		$data = $this->subjectTimeModel->where('id', $slug)->first();
+		$subject_data = $this->subjectModel->where('id', $data->subject_id)->first();
+		$back = $subject_data->slug;
 		$title = 'Editar Turma: '.$data->year;
 		$first_teacher = $this->teacherModel->where('id', $data->teacher_id)->first()->slug;
 		if ($data->teacher2_id) {
@@ -125,11 +130,11 @@ class ClassController extends Controller
 
 	public function update(Request $request, $slug) {
 		$input = $request->all();
-		$subject_by_input = $this->subjectModel->select('ic', 'name', 'slug')->where('slug', $input['subject'])->first();
+		$subject_by_input = $this->subjectModel->select('id', 'name', 'slug')->where('slug', $input['subject'])->first();
 		$input['subject_id'] = $subject_by_input->id;
 		$teacher = $this->teacherModel->select('id')->where('slug', $input['teacher'])->first();
 		$input['teacher_id'] = $teacher->id;
-		if (isset($input['teacher2']) and $input['teacher2'] !== 0) {
+		if (isset($input['teacher2']) and $input['teacher2'] != 0) {
 			$teacher = $this->teacherModel->select('id')->where('slug', $input['teacher2'])->first();
 			$input['teacher2_id'] = $teacher->id;
 		}
@@ -141,13 +146,13 @@ class ClassController extends Controller
 		}
 	}
 
-	public function situation($id, $situation) {
+	public function situation($id, $situation, $subject_slug) {
 		$subject = $this->subjectTimeModel->where('id', $id)->first();
 		$subject->situation = $situation;
 		if($subject->save()) {
-			return redirect()->route('admin.subject.time.list')->with('success', 'Situação alterada com sucesso!');
+			return redirect()->route('admin.subject.time.list', $subject_slug)->with('success', 'Situação alterada com sucesso!');
 		} else {
-			return redirect()->route('admin.subject.time.list')->with('danger', 'Erro ao alterar a situação, tente novamente.');
+			return redirect()->route('admin.subject.time.list', $subject_slug)->with('danger', 'Erro ao alterar a situação, tente novamente.');
 		}
 	}
 
@@ -162,11 +167,13 @@ class ClassController extends Controller
 		$icon = 'fa-users';
 		return view('subject.student', compact('data', 'title', 'icon', 'student', 'id', 'options'));
 	}
+
 	public function studentStore(Request $request, $id) {
 		$input = $request->all();
 		$data = $this->subjectTimeModel->where('id', $id)->first()->student()->attach($input['student']);
 		return redirect()->route('admin.subject.time.student', $id)->with('success', 'Aluno vinculado com sucesso');
 	}
+
 	public function studentDelete($student, $id) {
 		$data = $this->subjectTimeModel->where('id', $id)->first()->student()->detach($student);
 		return redirect()->route('admin.subject.time.student', $id)->with('success', 'Aluno desvinculado!');

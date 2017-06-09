@@ -43,7 +43,7 @@ Route::group(['prefix'=>'admin', 'as' => 'admin.', 'middleware' => 'auth'], func
 	});
 	/*---------------*/
 
-	/*ROUTES TO STUDENT*/
+	/*ROUTES TO EMPLOYEE*/
 	Route::group(['prefix'=>'funcionarios', 'as' => 'employee.'], function() {
 		Route::get('listar',                      ['as' => 'list',      'uses' => 'EmployeeController@roll'      ]);
 		Route::get('cadastrar',                   ['as' => 'create',    'uses' => 'EmployeeController@create'    ]);
@@ -96,7 +96,7 @@ Route::group(['prefix'=>'admin', 'as' => 'admin.', 'middleware' => 'auth'], func
 			Route::get('editar/{slug?}',              ['as' => 'edit',      'uses' => 'ClassController@edit'      ]);
 			Route::put('editar/{slug?}',              ['as' => 'update',    'uses' => 'ClassController@update'    ]);
 			Route::get('excluir/{slug?}',             ['as' => 'delete',    'uses' => 'ClassController@delete'    ]);
-			Route::get('situation/{slug?}/{action?}', ['as' => 'situation', 'uses' => 'ClassController@situation' ]);
+			Route::get('situation/{slug?}/{action?}/{subject?}', ['as' => 'situation', 'uses' => 'ClassController@situation' ]);
 			Route::get('alunos/{id?}', ['as' => 'student', 'uses' => 'ClassController@student' ]);
 			Route::post('alunos/cadastrar/{id?}', ['as' => 'student.store', 'uses' => 'ClassController@studentStore' ]);
 			Route::get('alunos/deletar/{user?}/{id?}', ['as' => 'student.delete', 'uses' => 'ClassController@studentDelete' ]);

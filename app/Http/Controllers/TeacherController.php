@@ -51,8 +51,12 @@ class TeacherController extends Controller
 	public function store(Request $request) {
 		$input = $request->all();
 		setRoleToUser($input['user_id'], 'teacher');
-		$teacher = $this->teacherModel->create($input);
-		return redirect()->route('admin.teacher.edit', $teacher->slug);
+		$teacher = $this->teacherModel->fill($input);
+		if($teacher->save()) {
+			return redirect()->route('admin.teacher.edit', $teacher->slug)->with('success', 'Professor alterado com sucesso!');
+		} else {
+			return redirect()->route('admin.teacher.edit', $teacher->slug)->with('danger', 'Erro ao cadastrar professor, tente novamente.');
+		}
 	}
 
 	public function edit($slug) {
@@ -68,16 +72,30 @@ class TeacherController extends Controller
 	public function update(Request $request, $slug) {
 		$input = $request->all();
 		$teacher = $this->teacherModel->where('slug', $slug)->first();
-		$teacher->update($input);
-		return redirect()->route('admin.teacher.edit', $teacher->slug);
+		if($teacher->update($input)) {
+			return redirect()->route('admin.teacher.edit', $teacher->slug)->with('success', 'Professor editado com sucesso!');
+		} else {
+			return redirect()->route('admin.teacher.edit', $teacher->slug)->with('danger', 'Erro ao alterar professor, tente novamente.');
+		}
+	}
+
+	public function delete($slug='') {
+		$teacher = $this->teacherModel->where('slug', $slug)->first();
+		if($teacher->delete()) {
+			return redirect()->route('admin.teacher.list')->with('success', 'Professor excluído com sucesso!');
+		} else {
+			return redirect()->route('admin.teacher.list')->with('danger', 'Erro ao excluir professor, tente novamente.');
+		}
 	}
 
 	public function situation($slug, $situation) {
 
 		$teacher = $this->teacherModel->where('slug', $slug)->first();
 		$teacher->situation = $situation;
-		$teacher->save();
-		return redirect()->route('admin.teacher.list');
-
+		if($teacher->save()) {
+			return redirect()->route('admin.teacher.list')->with('success', 'Situação alterada com sucesso!');
+		} else {
+			return redirect()->route('admin.teacher.list')->with('danger', 'Erro ao alterar professor, tente novamente.');
+		}
 	}
 }

@@ -40,14 +40,16 @@
 								<small class="text-danger">{{ $errors->first('password_confirmation') }}</small>
 							</div>
 
-							<div class="form-group">
-							    <div class="checkbox{{ $errors->has('is_admin') ? ' has-error' : '' }}">
-							        <label for="is_admin">
-							            {!! Form::checkbox('is_admin', null, null, ['id' => 'is_admin']) !!} Este usuário é administrador?
-							        </label>
-							    </div>
-							    <small class="text-danger">{{ $errors->first('is_admin') }}</small>
-							</div>
+							@if (\Auth::user()->hasRole('root'))
+								<div class="form-group">
+								    <div class="checkbox{{ $errors->has('is_admin') ? ' has-error' : '' }}">
+								        <label for="is_admin">
+								            {!! Form::checkbox('is_admin', null, null, ['id' => 'is_admin']) !!} Este usuário é administrador?
+								        </label>
+								    </div>
+								    <small class="text-danger">{{ $errors->first('is_admin') }}</small>
+								</div>
+							@endif
 
 							<div class="row">
 								<div class="btn-group pull-right">
