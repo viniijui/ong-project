@@ -16,15 +16,15 @@ Execute o comando "npm install" na raiz do projeto
 
 ## Step 5
 
-Para subir o projeto  execute o comando "php artisan serve"
+Para subir o projeto  execute o comando "php artisan serve" <br />
 O Projeto pode ser acessado pelo endereço: http://localhost:8000
 
 ## Obs:
 Usuários para acesso:
-<strong>Adminstrador</strong>
-user: vinirssantos@gmail.com
-pass: 123123
-<strong>Professor</strong>
-user: teacher@goodteacher.com
-pass: 123123
+<strong>Adminstrador</strong><br />
+user: vinirssantos@gmail.com<br />
+pass: 123123<br /><br />
+<strong>Professor</strong><br />
+user: teacher@goodteacher.com<br />
+pass: 123123<br />
 
