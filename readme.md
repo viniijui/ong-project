@@ -20,7 +20,7 @@ Para subir o projeto  execute o comando "php artisan serve" <br />
 O Projeto pode ser acessado pelo endereço: http://localhost:8000
 
 ## Obs:
-Usuários para acesso:
+Usuários para acesso: <br />
 <strong>Adminstrador</strong><br />
 user: vinirssantos@gmail.com<br />
 pass: 123123<br /><br />
