@@ -4,7 +4,7 @@ Importe o Arquivo ONG.sql no seu banco de dados
 
 ## Step 2
 
-Crie um arquivo .env na raiz do projeto com base no arquivo .env.example já existente e insira as configuração de acesso ao banco de dados
+Crie um arquivo .env na raiz do projeto com base no arquivo .env.example já existente e insira as configurações de acesso ao banco de dados
 
 ## Step 3
 
